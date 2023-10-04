@@ -1,3 +1,8 @@
+using AcortURL.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace AcortURL
 {
     public class Program
@@ -12,6 +17,8 @@ namespace AcortURL
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<UrlsShortenerContext>(dbContextOptions => dbContextOptions.UseSqlite(
+    builder.Configuration["ConnectionStrings:UrlsAPIDBConnectionString"]));
 
             var app = builder.Build();
 
