@@ -14,5 +14,8 @@ namespace AcortURL.Entities
 
         [Required]
         public string? Url { get; set; }
+
+        public string? UrlCorta { get; set; }
+
     }
 }

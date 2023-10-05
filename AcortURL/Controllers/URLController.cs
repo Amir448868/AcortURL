@@ -3,11 +3,13 @@ using AcortURL.Entities;
 using AcortURL.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
 namespace AcortURL.Controllers
 {
-    [ApiController]
+
+        [ApiController]
     [Route(template: "api/[controller]")]
 
     public class URLController : ControllerBase
@@ -19,36 +21,58 @@ namespace AcortURL.Controllers
             _UrlContext = UrlContext;
         }
 
+        /*
         [HttpGet("get")]
         public IActionResult GetURLs()
         {
             return Ok(_UrlContext.Urls.ToList());
+        }*/
+
+
+        [HttpGet("get/{url}")]
+        public IActionResult GetURL(string url)
+        {
+            var urlEntity = _UrlContext.Urls.FirstOrDefault(u => u.UrlCorta == url);
+
+           if (urlEntity == null)
+            {
+                return NotFound("la url no existe");
+            }
+
+            return Redirect(urlEntity.Url);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetURL(int id)
-        {
-            var url = _UrlContext.Urls.Find(id);
-            if (url == null)
-            {
-                return NotFound();
-            }
-            return Ok(url);
-        }
 
         [HttpPost("post")]
          public IActionResult CreateURL([FromQuery] URLForCreationDto newUrl)
         {
+            string shortUrl = GenerarShortUrl();
+
             var urlEntity = new URL()
             {
                 Nombre = newUrl.Nombre,
-                Url = newUrl.Url
+                Url = newUrl.Url,
+                UrlCorta = shortUrl
             };
-
             _UrlContext.Urls.Add(urlEntity);
             _UrlContext.SaveChanges();
             return Ok(urlEntity);
         }
+        private string GenerarShortUrl()
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var shortUrl = new StringBuilder();
 
+            for (int i = 0; i < 6; i++)
+            {
+                shortUrl.Append(chars[random.Next(chars.Length)]);
+            }
+
+            return shortUrl.ToString();
+        }
     }
 }
+
+
+

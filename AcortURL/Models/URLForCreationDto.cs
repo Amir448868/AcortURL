@@ -7,6 +7,8 @@ namespace AcortURL.Models
         [Required]
         public string? Nombre { get; set; }
         [Required]
-        public string? Url { get; set; }
+        public string? Url {get; set;}
+
+
     }
 }
